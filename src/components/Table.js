@@ -28,16 +28,18 @@ class TableView extends React.Component {
         return (
             <TableContainer>
                 <Figure figureCells={tableBackgroundCells}/>
-                <Figure figureCells={snakeCells} color={"green"}/>
                 <Cell x={x} y={y} color={"red"}/>
+
+                <Figure figureCells={snakeCells} color={"green"}/>
             </TableContainer>
         )
     }
 }
 
 const mapStateToProps = (state) => {
-    const cells = state.getIn(["snake", 'cells']);
-    const foodCell = state.get("foodCell");
+    const tableObjects = state.get('tableObjects');
+    const cells = tableObjects.getIn(["snake", 'cells']);
+    const foodCell = tableObjects.get("foodCell");
 
 
     return {snake: {cells: cells}, foodCell}

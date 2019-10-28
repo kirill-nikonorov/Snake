@@ -17,7 +17,7 @@ export const FigureView = ({figureCells, color}) => {
                 const y = cell.get('y');
                 cellsArray.push(
                     <Cell x={x} y={y} color={color}
-                          key={`${x} + ${y}`}>{`${x} + ${y}`}</Cell>
+                          key={`${x} + ${y}`}/>
                 );
                 return cellsArray;
             }, [])}

@@ -1,52 +1,14 @@
-import camelCase from 'camelcase';
 import {DIRECTIONS} from "../constants/common";
-import createRepeat from '@avinlab/repeat';
 
 const {RIGHT, LEFT, UP, DOWN} = DIRECTIONS;
 
-const generateRepeaterName = direction => {
-    return camelCase(`${direction}_Movement`);
-};
 
 export const connectKeyboardToControlling = ({
-                                                 pushSnake,
                                                  toggleGameOn,
                                                  startNewGame,
-                                             }, {
-                                                 setUpGameTimerIfGameIsOn,
-                                                 cleanGameTimerIfDirectionIsAppropriate
+                                                 directionKeyUpCB,
+                                                 directionKeyDownCB
                                              }) => {
-    const repeatersBank = {};
-
-
-    const handleLingeringKeyDown = direction => {
-        const repeaterName = generateRepeaterName(direction);
-        repeatersBank[repeaterName] = createRepeat({
-            action: () => {
-                pushSnake(direction);
-            },
-            delay: 100,
-        });
-
-        repeatersBank[repeaterName].start();
-    };
-
-
-    const directionKeyDownCB = (direction) => {
-        cleanGameTimerIfDirectionIsAppropriate(direction);
-        handleLingeringKeyDown(direction);
-    };
-
-    const directionKeyUpCB = direction => {
-        const repeaterName = generateRepeaterName(direction);
-        let {[repeaterName]: repeater} = repeatersBank;
-        if (repeater) {
-            repeater.stop();
-            repeatersBank[repeaterName] = null;
-        }
-        setUpGameTimerIfGameIsOn();
-
-    };
 
     const listener = new window.keypress.Listener();
 
@@ -86,4 +48,4 @@ export const connectKeyboardToControlling = ({
             prevent_repeat: true
         }
     ]);
-}
+};

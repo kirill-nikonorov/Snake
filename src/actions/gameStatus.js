@@ -4,7 +4,7 @@ import {
     PLATFORM_WIDTH_CELLS_COUNT,
 } from '../constants/common'
 import {checkIsGameOnPause, checkIsGameOn, checkIsTurnedOff} from '../utils/gameStatusCheckers'
-import {turnOnGame, pauseGame} from '../lib/redux-actions/gameStatus'
+import {turnOnGame, pauseGame, overGame} from '../lib/redux-actions/gameStatus'
 
 export const centredPlatformX = Math.round((CELLS_HORIZONTAL_COUNT - PLATFORM_WIDTH_CELLS_COUNT) / 2)
 export const centredMissileX = Math.round((CELLS_HORIZONTAL_COUNT) / 2);
@@ -28,3 +28,4 @@ export const toggleGameOn = () => (dispatch, getState) => {
 
 };
 
+export {overGame}

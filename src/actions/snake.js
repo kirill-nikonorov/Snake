@@ -4,10 +4,11 @@ import {checkIsWithinAllBounds} from "../utils/boundComplianceCheck";
 
 import {Map} from 'immutable'
 
-const {min, abs, floor, ceil} = Math;
-
 import {DIRECTIONS} from "../constants/common";
 import {checkIsGameOn} from "../utils/gameStatusCheckers";
+import {overGame} from "../lib/redux-actions/gameStatus";
+import {updateTableObjects} from "../lib/redux-actions/tableObjects";
+import {createFoodCell} from "./food";
 
 const {LEFT, RIGHT, UP, DOWN} = DIRECTIONS;
 
@@ -22,13 +23,6 @@ export const checkIsDirectionIsAppropriate = (newDirection, oldDirection, cells)
 
     const snakeHasTail = cells.size > 1;
     const oppositeDirection = oppositeDirections[oldDirection];
-
-    /*    console.group();
-        console.log("newDirection = ", newDirection);
-        console.log("oppositeDirection = ", oppositeDirection);
-        console.log("snakeHasTail = ", snakeHasTail);
-        console.log("directionIsAppropriate = ", directionIsAppropriate);
-        console.groupEnd();*/
 
     return !(snakeHasTail && (newDirection === oppositeDirection))
 };
@@ -55,23 +49,24 @@ const getDirectionsChanges = (direction) => {
     }
     return {xChange, yChange}
 };
-const createHead = (x, y, oldHead) => {
-    return {}
-};
+
 export const pushSnake = (newDirection) => (dispatch, getState) => {
+
 
     const gameStatus = getState().get('gameStatus');
     const gameIsOn = checkIsGameOn(gameStatus);
 
     if (!gameIsOn) return;
-
+    
     const state = getState();
-    const snake = state.get('snake');
+    const tableObjects = state.get('tableObjects');
+
+    const snake = tableObjects.get('snake');
     const cells = snake.get("cells");
     const head = cells.first();
     const x = head.get("x");
     const y = head.get("y");
-    const foodCell = state.get("foodCell");
+    const foodCell = tableObjects.get("foodCell");
     const xFood = foodCell.get("x");
     const yFood = foodCell.get("y");
     let headDirection = snake.get("direction");
@@ -90,21 +85,28 @@ export const pushSnake = (newDirection) => (dispatch, getState) => {
     const hypotheticallyNewX = x + xChange;
     const hypotheticallyNewY = y + yChange;
 
-
-    if (!checkIsWithinAllBounds(hypotheticallyNewX, hypotheticallyNewY)) return;
-
+    if (!checkIsWithinAllBounds(hypotheticallyNewX, hypotheticallyNewY)) {
+        dispatch(overGame());
+        return;
+    }
 
     const crushedWithFood = xFood === hypotheticallyNewX && yFood === hypotheticallyNewY;
 
-    crushedWithFood && console.log(crushedWithFood);
-    const tailHandledCells = crushedWithFood ? cells : cells.pop();
+    const foodPart = {};
+    if (crushedWithFood) {
+        console.log("crushedWithFood");
+        foodPart.foodCell = createFoodCell();
 
+    }
+    const tailHandledCells = crushedWithFood ? cells : cells.pop();
 
     const newHead = Map({x: hypotheticallyNewX, y: hypotheticallyNewY});
 
     const newCells = tailHandledCells.unshift(newHead);
 
-    dispatch(updateSnake({cells: newCells, direction:headDirection}));
+    dispatch(updateTableObjects({
+        snake: {cells: newCells, direction: headDirection}, ...foodPart
+    }));
 
 };
 

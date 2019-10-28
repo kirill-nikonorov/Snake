@@ -9,6 +9,8 @@ import {
 } from "../actions/snake";
 import {checkIsGameOn} from "../utils/gameStatusCheckers";
 import {connectKeyboardToControlling} from "../utils/keyBoardControl";
+import createRepeat from "@avinlab/repeat";
+import camelCase from "camelcase/index";
 
 const GameContainer = styled.div`
         height: ${TABLE_HEIGHT_PX}px;
@@ -35,31 +37,60 @@ const AnglePanel = styled.div`
         bottom: -40px;
         `;
 
+const generateRepeaterName = direction => {
+    return camelCase(`${direction}_Movement`);
+};
 
 class GameView extends React.Component {
     componentDidMount() {
         const {
-            pushSnake,
             toggleGameOn,
             startNewGame
         } = this.props;
-        const actions = {
-            pushSnake,
+
+        connectKeyboardToControlling({
+            directionKeyUpCB: this.directionKeyUpCB,
+            directionKeyDownCB: this.directionKeyDownCB,
             toggleGameOn,
-            startNewGame
-        };
-        const timerMethods = {
-            setUpGameTimerIfGameIsOn: this.setUpGameTimerIfGameIsOn.bind(this),
-            cleanGameTimer: this.cleanGameTimer.bind(this),
-            cleanGameTimerIfDirectionIsAppropriate: this.cleanGameTimerIfDirectionIsAppropriate.bind(this)
-        };
-        connectKeyboardToControlling(actions, timerMethods)
+            startNewGame,
+        })
     }
+
+    handleLingeringKeyDown = (direction) => {
+        const {pushSnake} = this.props;
+        const repeaterName = generateRepeaterName(direction);
+        this[repeaterName] = createRepeat({
+            action: () => {
+                pushSnake(direction);
+            },
+            delay: 100,
+        });
+
+        this[repeaterName].start();
+    };
+
+
+    directionKeyDownCB = (direction) => {
+        this.cleanGameTimerIfDirectionIsAppropriate(direction);
+        this.handleLingeringKeyDown(direction);
+    };
+
+    directionKeyUpCB = direction => {
+        const repeaterName = generateRepeaterName(direction);
+        let {[repeaterName]: repeater} = this;
+        if (repeater) {
+            repeater.stop();
+            this[repeaterName] = null;
+        }
+        this.setUpGameTimerIfGameIsOn();
+
+    };
 
     setUpGameTimerIfGameIsOn = () => {
         const {gameIsOn} = this.props;
         if (gameIsOn) this.setUpGameTimer();
     };
+
     cleanGameTimerIfDirectionIsAppropriate = (newDirection) => {
         const {cells, direction} = this.props;
         const directionIsAppropriate = checkIsDirectionIsAppropriate(newDirection, direction, cells);
@@ -96,6 +127,7 @@ class GameView extends React.Component {
                 <PauseButton onClick={toggleGameOn}>Пауза</PauseButton>
                 <KikButton onClick={() => movMissile({x: 8.55, y: 4.55})}>Кинуть шар</KikButton>
                 <Table/>
+
                 <AnglePanel>{angle}</AnglePanel>
 
             </GameContainer>
@@ -104,9 +136,10 @@ class GameView extends React.Component {
 }
 
 const mapStateToProps = (state) => {
+    const tableObjects = state.get('tableObjects');
     const gameStatus = state.get('gameStatus');
-    const cells = state.getIn(["snake", 'cells']);
-    const direction = state.getIn(["snake", 'direction']);
+    const cells = tableObjects.getIn(["snake", 'cells']);
+    const direction = tableObjects.getIn(["snake", 'direction']);
     return {gameIsOn: checkIsGameOn(gameStatus), cells, direction}
 
 };

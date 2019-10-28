@@ -1,14 +1,12 @@
 import {gameStatusReducer} from "./gameStatusReducer";
-import {snakeReducer} from "./snakeReducer";
 import {combineReducers} from 'redux-immutable';
-import {foodReducer} from "./foodReducer";
+import {tableObjectsReducer} from "./tableObjects";
+
 
 
 export const rootReducer = combineReducers({
-    snake: snakeReducer,
+    tableObjects: tableObjectsReducer,
     gameStatus: gameStatusReducer,
-    foodCell : foodReducer
-
 });
 
-//     gameStatus: gameStatusReducer,
+
