@@ -1,13 +1,17 @@
 import {
-    CELLS_HORIZONTAL_COUNT, CELLS_VERTICAL_COUNT, MISSILE_SIDE_IN_CELLS, PLATFORM_HEIGHT_CELLS_COUNT,
+    CELLS_HORIZONTAL_COUNT,
+    CELLS_VERTICAL_COUNT,
+    MISSILE_SIDE_IN_CELLS,
+    PLATFORM_HEIGHT_CELLS_COUNT,
     PLATFORM_WIDTH_CELLS_COUNT,
-    TARGET_HEIGHT_CELLS, TARGET_WIDTH_CELLS
-} from "./common";
+    TARGET_HEIGHT_CELLS,
+    TARGET_WIDTH_CELLS
+} from './common';
 
-import {List, Map} from 'immutable'
+import {List, Map} from 'immutable';
 
 const createFigureCells = (rowCount, columnCount) => {
-    return List([]).withMutations((figure) => {
+    return List([]).withMutations(figure => {
         for (let y = 0; y < rowCount; y++) {
             for (let x = 0; x < columnCount; x++) {
                 figure.push(Map({x, y}));

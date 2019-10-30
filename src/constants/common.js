@@ -16,7 +16,6 @@ export const MISSILE_SIDE_IN_CELLS = 1;
 export const TARGET_WIDTH_CELLS = 5;
 export const TARGET_HEIGHT_CELLS = 5;
 
-
 export const GAME_STATUSES = {
     GAME_IS_TURNED_OFF: 'GAME_IS_TURNED_OFF',
     GAME_IS_ON: 'GAME_IS_ON',
@@ -30,4 +29,3 @@ export const DIRECTIONS = {
     LEFT: 'LEFT',
     RIGHT: 'RIGHT'
 };
-

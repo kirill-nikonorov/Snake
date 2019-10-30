@@ -1,41 +1,36 @@
-import React from "react";
-import styled from 'styled-components'
-import {Table} from "./Table";
-import {STEP_TIME_MILLISECONDS, TABLE_HEIGHT_PX, TABLE_WIDTH_PX} from "../constants/common";
-import {connect} from "react-redux";
-import {startNewGame, toggleGameOn} from "../actions/gameStatus";
+import React from 'react';
+import styled from 'styled-components';
+import {Table} from './Table';
 import {
-    checkIsDirectionIsAppropriate, pushSnake
-} from "../actions/snake";
-import {checkIsGameOn} from "../utils/gameStatusCheckers";
-import {connectKeyboardToControlling} from "../utils/keyBoardControl";
-import createRepeat from "@avinlab/repeat";
-import camelCase from "camelcase/index";
+    DIRECTIONS,
+    STEP_TIME_MILLISECONDS,
+    TABLE_HEIGHT_PX,
+    TABLE_WIDTH_PX
+} from '../constants/common';
+import {connect} from 'react-redux';
+import {startNewGame, toggleGameOn} from '../actions/gameStatus';
+import {checkIsDirectionIsAppropriate, pushSnake} from '../actions/snake';
+import {checkIsGameOn} from '../utils/gameStatusCheckers';
+import {connectKeyboardToControlling} from '../utils/keyBoardControl';
+import createRepeat from '@avinlab/repeat';
+import camelCase from 'camelcase/index';
+import {ScorePanel} from './Panels/ScorePanel';
+import {ControlPanelView} from "./Panels/ControlPanel";
 
 const GameContainer = styled.div`
-        height: ${TABLE_HEIGHT_PX}px;
-        width:${TABLE_WIDTH_PX}px;
-        outline: 5px solid #666;
-        position: relative;
-        `;
+    height: ${TABLE_HEIGHT_PX}px;
+    width: ${TABLE_WIDTH_PX}px;
+    outline: 5px solid #666;
+    position: relative;
+`;
 
-const PauseButton = styled.button`
-        position: absolute;
-        top: -30px;
-        `;
+const {LEFT, RIGHT, UP, DOWN} = DIRECTIONS
 
 const KikButton = styled.button`
-        position: absolute;
-        top: -30px;
-        left: 70px;
-        `;
-const AnglePanel = styled.div`
-        height: 25px;
-        width: 25px;
-        border: 1px solid black;
-        position: absolute;
-        bottom: -40px;
-        `;
+    position: absolute;
+    top: -30px;
+    left: 70px;
+`;
 
 const generateRepeaterName = direction => {
     return camelCase(`${direction}_Movement`);
@@ -43,34 +38,30 @@ const generateRepeaterName = direction => {
 
 class GameView extends React.Component {
     componentDidMount() {
-        const {
-            toggleGameOn,
-            startNewGame
-        } = this.props;
+        const {toggleGameOn, startNewGame} = this.props;
 
         connectKeyboardToControlling({
             directionKeyUpCB: this.directionKeyUpCB,
             directionKeyDownCB: this.directionKeyDownCB,
             toggleGameOn,
-            startNewGame,
-        })
+            startNewGame
+        });
     }
 
-    handleLingeringKeyDown = (direction) => {
+    handleLingeringKeyDown = direction => {
         const {pushSnake} = this.props;
         const repeaterName = generateRepeaterName(direction);
         this[repeaterName] = createRepeat({
             action: () => {
                 pushSnake(direction);
             },
-            delay: 100,
+            delay: 100
         });
 
         this[repeaterName].start();
     };
 
-
-    directionKeyDownCB = (direction) => {
+    directionKeyDownCB = direction => {
         this.cleanGameTimerIfDirectionIsAppropriate(direction);
         this.handleLingeringKeyDown(direction);
     };
@@ -83,7 +74,6 @@ class GameView extends React.Component {
             this[repeaterName] = null;
         }
         this.setUpGameTimerIfGameIsOn();
-
     };
 
     setUpGameTimerIfGameIsOn = () => {
@@ -91,9 +81,13 @@ class GameView extends React.Component {
         if (gameIsOn) this.setUpGameTimer();
     };
 
-    cleanGameTimerIfDirectionIsAppropriate = (newDirection) => {
+    cleanGameTimerIfDirectionIsAppropriate = newDirection => {
         const {cells, direction} = this.props;
-        const directionIsAppropriate = checkIsDirectionIsAppropriate(newDirection, direction, cells);
+        const directionIsAppropriate = checkIsDirectionIsAppropriate(
+            newDirection,
+            direction,
+            cells
+        );
         if (directionIsAppropriate) this.cleanGameTimer();
     };
 
@@ -103,7 +97,7 @@ class GameView extends React.Component {
         this.cleanGameTimer();
 
         this.stepTimer = setInterval(() => {
-            pushSnake()
+            pushSnake();
         }, STEP_TIME_MILLISECONDS);
     };
     cleanGameTimer = () => {
@@ -119,33 +113,38 @@ class GameView extends React.Component {
     }
 
     render() {
-        const {toggleGameOn, movMissile, angle} = this.props;
-
+        const {toggleGameOn, startNewGame} = this.props;
 
         return (
             <GameContainer>
-                <PauseButton onClick={toggleGameOn}>Пауза</PauseButton>
-                <KikButton onClick={() => movMissile({x: 8.55, y: 4.55})}>Кинуть шар</KikButton>
                 <Table/>
+                <ScorePanel/>
+                <ControlPanelView
+                    directionKeyDownCB={this.directionKeyDownCB}
+                    directionKeyUpCB={this.directionKeyUpCB}
+                    toggleGameOn={toggleGameOn}
+                    startNewGame={startNewGame}
 
-                <AnglePanel>{angle}</AnglePanel>
+                >Пауза</ControlPanelView>
 
+                <KikButton>Кинуть шар</KikButton>
             </GameContainer>
-        )
+        );
     }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
     const tableObjects = state.get('tableObjects');
     const gameStatus = state.get('gameStatus');
-    const cells = tableObjects.getIn(["snake", 'cells']);
-    const direction = tableObjects.getIn(["snake", 'direction']);
-    return {gameIsOn: checkIsGameOn(gameStatus), cells, direction}
-
+    const cells = tableObjects.getIn(['snake', 'cells']);
+    const direction = tableObjects.getIn(['snake', 'direction']);
+    return {gameIsOn: checkIsGameOn(gameStatus), cells, direction};
 };
-export const Game = connect(mapStateToProps, {
-    pushSnake,
-    toggleGameOn,
-    startNewGame
-})(GameView);
-
+export const Game = connect(
+    mapStateToProps,
+    {
+        pushSnake,
+        toggleGameOn,
+        startNewGame
+    }
+)(GameView);

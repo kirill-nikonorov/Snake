@@ -1,6 +1,4 @@
-import {createAction} from 'redux-actions'
+import {createAction} from 'redux-actions';
 
 export const updateSnake = createAction('UPDATE_SNAKE');
-export const changeSnakeDirection = createAction('CHANGE_SNAKE_DIRECTION');
-
-
+export const resetSnake = createAction('RESET_SNAKE');

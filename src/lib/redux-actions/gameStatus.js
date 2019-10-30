@@ -1,4 +1,4 @@
-import {createAction} from 'redux-actions'
+import {createAction} from 'redux-actions';
 
 export const turnOnGame = createAction('TURN_ON_GAME');
 export const pauseGame = createAction('PAUSE_GAME');
