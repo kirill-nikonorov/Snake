@@ -7,6 +7,7 @@ import {connect} from 'react-redux';
 import {startNewGame, toggleGameOn} from '../actions/gameStatus';
 import {tableBackgroundCells} from '../constants/figures';
 import {Cell} from './Figure/Cell';
+import {pure} from 'recompose';
 
 const TableContainer = styled.div`
     height: 100%;
@@ -49,4 +50,4 @@ export const Table = connect(
         startNewGame,
         toggleGameOn
     }
-)(TableView);
+)(pure(TableView));

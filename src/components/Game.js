@@ -9,7 +9,7 @@ import {checkIsGameOn} from '../utils/gameStatusCheckers';
 import {connectKeyboardToControlling} from '../utils/keyBoardControl';
 import createRepeat from '@avinlab/repeat';
 import camelCase from 'camelcase/index';
-import {ScorePanel} from './Panels/Info/ScorePanel';
+
 import {ControlPanelView} from './Panels/ControlPanel';
 import {
     cleanGameTimer,
@@ -19,18 +19,13 @@ import {
 } from '../actions/gameTimer';
 import {Menu} from './Menu';
 import {InfoPanels} from './Panels/Info/InfoPanels';
+import {pure} from 'recompose';
 
 const GameContainer = styled.div`
     height: ${TABLE_HEIGHT_PX}px;
     width: ${TABLE_WIDTH_PX}px;
     outline: 5px solid #666;
     position: relative;
-`;
-
-const KikButton = styled.button`
-    position: absolute;
-    top: -30px;
-    left: 70px;
 `;
 
 const generateRepeaterName = direction => {
@@ -94,15 +89,13 @@ class GameView extends React.Component {
                 <Menu />
                 <Table />
                 <InfoPanels />
-                <ControlPanelView
+                {/*     <ControlPanel
                     directionKeyDownCB={this.directionKeyDownCB}
                     directionKeyUpCB={this.directionKeyUpCB}
                     toggleGameOn={toggleGameOn}
                     startNewGame={startNewGame}>
                     Пауза
-                </ControlPanelView>
-
-                {/*       <KikButton>Кинуть шар</KikButton>*/}
+                </ControlPanel>*/}
             </GameContainer>
         );
     }
@@ -126,4 +119,4 @@ export const Game = connect(
         setUpGameTimer,
         setUpGameTimerIfGameIsOn
     }
-)(GameView);
+)(pure(GameView));

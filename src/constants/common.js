@@ -1,5 +1,5 @@
-export const CELL_HEIGHT_PX = 100;
-export const CELL_WEIGHT_PX = 100;
+export const CELL_HEIGHT_PX = 40;
+export const CELL_WEIGHT_PX = 40;
 
 export const CELLS_HORIZONTAL_COUNT = 10;
 export const CELLS_VERTICAL_COUNT = 10;

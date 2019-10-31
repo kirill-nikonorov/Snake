@@ -102,8 +102,6 @@ export const pushSnake = newDirection => (dispatch, getState) => {
 
     const crushedWithTail = checkDoesHaveCollisions(cells, hypotheticallyNewX, hypotheticallyNewY);
 
-    crushedWithTail && console.log('crushedWithTail');
-
     if (crushedWithTail) {
         dispatch(endGame());
         return;

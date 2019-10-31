@@ -30,6 +30,4 @@ export const endGame = () => (dispatch, getState) => {
     batch(() => {
         dispatch(overGame());
     });
-
-    console.log('endGame');
 };

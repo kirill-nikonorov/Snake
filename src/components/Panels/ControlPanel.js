@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import {CELL_HEIGHT_PX, DIRECTIONS, TABLE_WIDTH_PX} from '../../constants/common';
+import {pure} from 'recompose';
 
 const {LEFT, RIGHT, DOWN, UP} = DIRECTIONS;
 
@@ -19,7 +20,7 @@ const ControlButton = styled.button`
     left: 0;
 `;
 
-export const ControlPanelView = props => {
+const ControlPanelView = props => {
     const {directionKeyDownCB, directionKeyUpCB, toggleGameOn, startNewGame} = props;
 
     return (
@@ -48,3 +49,5 @@ export const ControlPanelView = props => {
         </ScorePanelContainer>
     );
 };
+
+export const ControlPanel = pure(ControlPanelView);
