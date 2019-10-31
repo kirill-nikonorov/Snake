@@ -29,7 +29,7 @@ class TableView extends React.Component {
                 <Figure figureCells={tableBackgroundCells} />
                 <Cell x={x} y={y} color={'red'} />
 
-                <Figure figureCells={snakeCells} color={'green'} headed/>
+                <Figure figureCells={snakeCells} color={'green'} headed />
             </TableContainer>
         );
     }

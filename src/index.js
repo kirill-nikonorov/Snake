@@ -4,11 +4,11 @@ import Root from './components/Root/Root';
 
 import {Provider} from 'react-redux';
 
-import {configureStore} from "./store/configureStore";
+import {configureStore} from './store/configureStore';
 
 render(
     <Provider store={configureStore()}>
-        <Root/>
+        <Root />
     </Provider>,
     document.getElementById('root')
 );

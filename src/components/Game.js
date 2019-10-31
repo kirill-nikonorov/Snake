@@ -1,21 +1,24 @@
 import React from 'react';
 import styled from 'styled-components';
 import {Table} from './Table';
-import {
-    DIRECTIONS,
-    STEP_TIME_MILLISECONDS,
-    TABLE_HEIGHT_PX,
-    TABLE_WIDTH_PX
-} from '../constants/common';
+import {TABLE_HEIGHT_PX, TABLE_WIDTH_PX} from '../constants/common';
 import {connect} from 'react-redux';
 import {startNewGame, toggleGameOn} from '../actions/gameStatus';
-import {checkIsDirectionIsAppropriate, pushSnake} from '../actions/snake';
+import {pushSnake} from '../actions/snake';
 import {checkIsGameOn} from '../utils/gameStatusCheckers';
 import {connectKeyboardToControlling} from '../utils/keyBoardControl';
 import createRepeat from '@avinlab/repeat';
 import camelCase from 'camelcase/index';
-import {ScorePanel} from './Panels/ScorePanel';
-import {ControlPanelView} from "./Panels/ControlPanel";
+import {ScorePanel} from './Panels/Info/ScorePanel';
+import {ControlPanelView} from './Panels/ControlPanel';
+import {
+    cleanGameTimer,
+    cleanGameTimerIfDirectionIsAppropriate,
+    setUpGameTimer,
+    setUpGameTimerIfGameIsOn
+} from '../actions/gameTimer';
+import {Menu} from './Menu';
+import {InfoPanels} from './Panels/Info/InfoPanels';
 
 const GameContainer = styled.div`
     height: ${TABLE_HEIGHT_PX}px;
@@ -23,8 +26,6 @@ const GameContainer = styled.div`
     outline: 5px solid #666;
     position: relative;
 `;
-
-const {LEFT, RIGHT, UP, DOWN} = DIRECTIONS
 
 const KikButton = styled.button`
     position: absolute;
@@ -62,54 +63,27 @@ class GameView extends React.Component {
     };
 
     directionKeyDownCB = direction => {
-        this.cleanGameTimerIfDirectionIsAppropriate(direction);
+        const {cleanGameTimerIfDirectionIsAppropriate} = this.props;
+        cleanGameTimerIfDirectionIsAppropriate(direction);
         this.handleLingeringKeyDown(direction);
     };
 
     directionKeyUpCB = direction => {
+        const {setUpGameTimerIfGameIsOn} = this.props;
         const repeaterName = generateRepeaterName(direction);
         let {[repeaterName]: repeater} = this;
         if (repeater) {
             repeater.stop();
             this[repeaterName] = null;
         }
-        this.setUpGameTimerIfGameIsOn();
-    };
-
-    setUpGameTimerIfGameIsOn = () => {
-        const {gameIsOn} = this.props;
-        if (gameIsOn) this.setUpGameTimer();
-    };
-
-    cleanGameTimerIfDirectionIsAppropriate = newDirection => {
-        const {cells, direction} = this.props;
-        const directionIsAppropriate = checkIsDirectionIsAppropriate(
-            newDirection,
-            direction,
-            cells
-        );
-        if (directionIsAppropriate) this.cleanGameTimer();
-    };
-
-    setUpGameTimer = () => {
-        const {pushSnake} = this.props;
-
-        this.cleanGameTimer();
-
-        this.stepTimer = setInterval(() => {
-            pushSnake();
-        }, STEP_TIME_MILLISECONDS);
-    };
-    cleanGameTimer = () => {
-        const {stepTimer} = this;
-        if (stepTimer) clearInterval(stepTimer);
+        setUpGameTimerIfGameIsOn();
     };
 
     UNSAFE_componentWillReceiveProps({gameIsOn: NewGameIsOn}) {
-        const {gameIsOn} = this.props;
+        const {gameIsOn, setUpGameTimer, cleanGameTimer} = this.props;
 
-        if (!gameIsOn && NewGameIsOn) this.setUpGameTimer();
-        if (gameIsOn && !NewGameIsOn) this.cleanGameTimer();
+        if (!gameIsOn && NewGameIsOn) setUpGameTimer();
+        if (gameIsOn && !NewGameIsOn) cleanGameTimer();
     }
 
     render() {
@@ -117,17 +91,18 @@ class GameView extends React.Component {
 
         return (
             <GameContainer>
-                <Table/>
-                <ScorePanel/>
+                <Menu />
+                <Table />
+                <InfoPanels />
                 <ControlPanelView
                     directionKeyDownCB={this.directionKeyDownCB}
                     directionKeyUpCB={this.directionKeyUpCB}
                     toggleGameOn={toggleGameOn}
-                    startNewGame={startNewGame}
+                    startNewGame={startNewGame}>
+                    Пауза
+                </ControlPanelView>
 
-                >Пауза</ControlPanelView>
-
-                <KikButton>Кинуть шар</KikButton>
+                {/*       <KikButton>Кинуть шар</KikButton>*/}
             </GameContainer>
         );
     }
@@ -145,6 +120,10 @@ export const Game = connect(
     {
         pushSnake,
         toggleGameOn,
-        startNewGame
+        startNewGame,
+        cleanGameTimer,
+        cleanGameTimerIfDirectionIsAppropriate,
+        setUpGameTimer,
+        setUpGameTimerIfGameIsOn
     }
 )(GameView);

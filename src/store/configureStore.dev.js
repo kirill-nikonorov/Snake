@@ -5,7 +5,7 @@ import DevTools from '../components/devTools/DevTools';
 
 import {fromJS, Map} from 'immutable';
 
-import {rootReducer} from "../reducers/rootReducer";
+import {rootReducer} from '../reducers/rootReducer';
 
 const persistenceConfig = {
     key: 'snake_game',
@@ -13,7 +13,7 @@ const persistenceConfig = {
         return initialState.merge(persistedState);
     },
     slicer: path => state => {
-        return Map({[path]: state.get(path)})
+        return Map({[path]: state.get(path)});
     },
     serialize: subset => JSON.stringify(subset.toJS()),
     deserialize: serializedData => fromJS(JSON.parse(serializedData))
@@ -21,10 +21,9 @@ const persistenceConfig = {
 
 const enhancer = compose(
     applyMiddleware(thunk),
-    persistState("score", persistenceConfig),
+    persistState('record', persistenceConfig),
     DevTools.instrument({maxAge: 30})
 );
-
 
 const configureStore = () => {
     const store = createStore(rootReducer, Map({}), enhancer);
@@ -37,6 +36,5 @@ const configureStore = () => {
     }
     return store;
 };
-
 
 export {configureStore};

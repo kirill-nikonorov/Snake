@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "dependencies": {
     "@avinlab/repeat": "^1.0.1",
+    "antd": "^3.24.3",
     "camelcase": "^5.3.1",
     "immutable": "^4.0.0-rc.12",
     "react": "^16.10.2",
@@ -14,7 +15,9 @@
     "redux-immutable": "^4.0.0",
     "redux-localstorage": "^0.4.1",
     "redux-thunk": "^2.3.0",
-    "styled-components": "^4.4.0"
+    "styled-components": "^4.4.0",
+    "css-loader": "^0.28.11",
+    "style-loader": "^0.21.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",

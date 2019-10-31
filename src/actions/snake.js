@@ -1,15 +1,13 @@
-import {checkIsWithinAllBounds} from '../utils/boundComplianceCheck';
-
 import {Map} from 'immutable';
 
 import {CELLS_HORIZONTAL_COUNT, CELLS_VERTICAL_COUNT, DIRECTIONS} from '../constants/common';
 import {checkIsGameOn} from '../utils/gameStatusCheckers';
-import {overGame} from '../lib/redux-actions/gameStatus';
 import {createFoodCell} from '../utils/foodCreation';
 import {batch} from 'react-redux';
 import {updateSnake} from '../lib/redux-actions/snake';
 import {setUpNewFoodCell} from '../lib/redux-actions/foodCell';
 import {incrementScore} from '../lib/redux-actions/score';
+import {endGame} from './gameStatus';
 
 const {LEFT, RIGHT, UP, DOWN} = DIRECTIONS;
 
@@ -40,17 +38,17 @@ const getDirectionsChanges = direction => {
             break;
         case UP:
             xChange = 0;
-            yChange = 1;
+            yChange = -1;
             break;
         case DOWN:
             xChange = 0;
-            yChange = -1;
+            yChange = +1;
             break;
     }
     return {xChange, yChange};
 };
 
-export const checkIsOnSnake = (snakeCells, x, y) =>
+export const checkDoesHaveCollisions = (snakeCells, x, y) =>
     snakeCells.some(cell => {
         const xCell = cell.get('x');
         if (xCell !== x) return false;
@@ -63,7 +61,6 @@ const teleportToOppositeSideIfNeeded = (c, boundIndex) => {
     if (c > boundIndex - 1) return 0;
     return c;
 };
-
 
 export const pushSnake = newDirection => (dispatch, getState) => {
     const gameStatus = getState().get('gameStatus');
@@ -103,12 +100,12 @@ export const pushSnake = newDirection => (dispatch, getState) => {
     hypotheticallyNewX = teleportToOppositeSideIfNeeded(hypotheticallyNewX, CELLS_HORIZONTAL_COUNT);
     hypotheticallyNewY = teleportToOppositeSideIfNeeded(hypotheticallyNewY, CELLS_VERTICAL_COUNT);
 
-    const crushedWithTail = checkIsOnSnake(cells, hypotheticallyNewX, hypotheticallyNewY);
+    const crushedWithTail = checkDoesHaveCollisions(cells, hypotheticallyNewX, hypotheticallyNewY);
 
     crushedWithTail && console.log('crushedWithTail');
 
     if (crushedWithTail) {
-        dispatch(overGame());
+        dispatch(endGame());
         return;
     }
 

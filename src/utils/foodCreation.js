@@ -1,6 +1,6 @@
 import {Map} from 'immutable';
 import {CELLS_HORIZONTAL_COUNT, CELLS_VERTICAL_COUNT} from '../constants/common';
-import {checkIsOnSnake} from '../actions/snake';
+import {checkDoesHaveCollisions} from '../actions/snake';
 
 const {floor, random} = Math;
 
@@ -16,7 +16,7 @@ export const createFoodCell = snakeCells => {
     let y = getRandomYCoordinate();
 
     if (snakeCells) {
-        if (checkIsOnSnake(snakeCells, x, y)) return createFoodCell(snakeCells);
+        if (checkDoesHaveCollisions(snakeCells, x, y)) return createFoodCell(snakeCells);
     }
 
     return Map({x, y});

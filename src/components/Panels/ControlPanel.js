@@ -19,14 +19,8 @@ const ControlButton = styled.button`
     left: 0;
 `;
 
-export const ControlPanelView = (props) => {
-
-    const {
-        directionKeyDownCB,
-        directionKeyUpCB,
-        toggleGameOn,
-        startNewGame
-    } = props;
+export const ControlPanelView = props => {
+    const {directionKeyDownCB, directionKeyUpCB, toggleGameOn, startNewGame} = props;
 
     return (
         <ScorePanelContainer>
@@ -50,12 +44,7 @@ export const ControlPanelView = (props) => {
                 onMouseUp={() => directionKeyUpCB(UP)}>
                 up
             </ControlButton>
-            <ControlButton
-                onClick={toggleGameOn}>
-                play
-            </ControlButton>
-
+            <ControlButton onClick={toggleGameOn}>play</ControlButton>
         </ScorePanelContainer>
     );
-
 };

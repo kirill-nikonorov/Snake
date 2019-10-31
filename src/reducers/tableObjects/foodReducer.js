@@ -11,8 +11,6 @@ export const foodReducer = handleActions(
         [resetFoodCell]: () => {
             return createFoodCell();
         }
-
     },
     createFoodCell()
-    )
-;
+);

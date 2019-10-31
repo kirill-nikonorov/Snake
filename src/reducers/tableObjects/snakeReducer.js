@@ -20,7 +20,6 @@ export const snakeReducer = handleActions(
         [resetSnake]: () => {
             return initialSnake;
         }
-
     },
     initialSnake
 );

@@ -9,7 +9,7 @@ export const scoreReducer = handleActions(
         },
         [resetScore]: () => {
             return 0;
-        },
+        }
     },
     0
 );
